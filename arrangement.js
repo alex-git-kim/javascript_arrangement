@@ -635,3 +635,107 @@ var copy = score;
 
 // 객체의 프로퍼티는 개수가 정해져 있지 않고, 동적으로 추가되거나 삭제할 수 있으며 값에도 제약이 없다.
 // 따라서 객체는 원시 값과 같이 확보해야 할 메모리 공간의 크기를 사전에 정해둘 수 없다.
+
+// 객체를 할당한 변수를 참조하면 메모리에 저장되어 있는 참조 값을 통해 실제 객체에 접근한다.
+
+// 할당이 이뤄지는 시점에 객체 리터럴이 해석되고, 그 결과 객체가 생성된다.
+var person = {
+    name: 'Kim'
+};
+
+// person 변수에 저장되어 있는 참조 값으로 실제 객체에 접근한다.
+console.log(person); // {name: "Kim"}
+
+// 객체는 재할당 없이 프로퍼티를 동적으로 추가할 수도 있고 프로퍼티 값을 갱신할 수도 있으며 프로퍼티 자체를 삭제할 수도 있다.
+var person = {
+    name: 'Kim'
+};
+
+// 프로퍼티 값 갱신
+person.name = 'Lee';
+
+// 프로퍼티 동적 생성
+person.address = 'Seoul';
+
+console.log(person); // {name: "Lee", address: "Seoul"}
+
+// 얕은 복사(shallow copy)와 깊은 복사(deep copy)
+// 얕은 복사의 경우에 여러 개의 식별자가 하나의 객체를 공유할 수 있다는 점에서 부작용이 있다.
+
+const o = { x: { y: 1 } };
+
+// 얕은 복사
+const c1 = { ...o };
+console.log(c1 === o); // false
+console.log(c1.x === o.x); // true
+// 얕은 복사로 생성된 복사본은 중첩되어있는 객체를 복사하지 않기 때문에 c1.x === o.x이다.
+// 이는 두 개의 식별자가 하나의 객체를 공유한다는 것을 의미하는데 이로 인해 원본 또는 사본 중 어느 한쪽에서 객체를 변경하면 서로 영향을 주고받는다.
+
+
+const _ = require('lodash');
+// 깊은 복사
+const c2 = _.cloneDeep(o);
+console.log(c2 === o); // false
+console.log(c2.x === o.x); // false
+// 깊은 복사로 생성된 복사본은 중첩되어있는 객체까지 복사했기 때문에 c2.x !== o.x이다.
+
+// "값에 의한 전달"과 "참조에 의한 전달"은 식별자가 기억하는 메모리 공간에 저장되어 있는 값을 복사해서 전달한다는 면에서 동일하다.
+// 따라서 자바스크립트에는 "참조에 의한 전달"은 존재하지 않고 "값에 의한 전달"만이 존재한다고 볼 수 있다.
+
+var person1 = {
+    name: 'Lee'
+};
+
+var person2 = {
+    name: 'Lee'
+};
+
+console.log(person1 === person2); // false
+console.log(person1.name === person2.name); // true
+// 객체 리터럴은 평가될 때마다 객체를 생성하므로 person1 변수와 person2 변수가 가리키는 객체는 다른 메모리에 저장된 별개의 객체
+// 하지만 person1.name과 person2.name은 값으로 평가될 수 있는 표현식으로 모두 원시 값 'Lee'로 평가된다. 따라서 true
+
+// 12. 함수=============================================================================================================================
+
+function add(x, y) {
+    return x + y;
+}
+
+add(2, 5); // 7
+// 매개변수(parameter): 함수 내부로 입력을 전달받는 변수 -> x, y
+// 인수(argument): 입력 -> 2, 5
+// 반환값(return value): 출력 -> x + y
+
+// 함수 호출(function call/invoke); 인수(argument)를 매개변수를 통해 함수에 전달하면서 함수의 실행을 명시적으로 지시하는 것
+
+// 코드의 중복을 억제하고 재사용성을 높이는 함수는 유지보수의 편의성을 높이고 실수를 줄여 코드의 신회성을 높이는 효과가 있다.
+
+// 함수 리터럴도 평가되어 값을 생성하며, 이 값은 객체다. 즉, 함수는 객체다.
+// 일반 객체는 호출할 수 없지만 함수는 호출할 수 있다.
+
+// 함수 선언문
+function add(x, y) {
+    return x + y;
+}
+
+// 함수 표현식
+var add = function (x, y) {
+    return x + y;
+}
+
+// Function 생성자 함수
+var add = new Function('x', 'y', 'return x + y');
+
+// 화살표 함수(ES6)
+var add = (x, y) => x + y;
+
+// 함수 선언문은 함수 이름을 생략할 수 없다.
+// function (x, y) {return x + y;} -> SyntaxError: Function statements require a function name
+// 함수 선언문은 표현식이 아닌 문이다. 만약 표현식인 문이라면 완료 값 undefined 대신 표현식이 평가되어 생성된 함수가 출력되어야 한다.
+
+// 함수 리터럴을 피연산자로 사용하면 함수 선언문이 아니라 함수 리터럴 표현식으로 해석된다.
+// 함수 리터럴에서는 함수 이름을 생략할 수 있다.
+(function bar() { console.log('bar'); })
+bar(); //ReferenceError: bar is not defined
+// 그룹 연산자 () 내에 있는 함수 리터럴(bar)은 함수 선언문으로 해석되지 않고 함수 리터럴 표현식으로 해석된다.
+// 그룹 연산자의 피연산자는 값으로 평가될 수 있는 표현식이어야 한다. 따라서 표현식이 아닌 문인 함수 선언문은 피연산자로 사용할 수 없다.
